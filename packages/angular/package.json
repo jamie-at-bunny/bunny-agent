@@ -1,0 +1,26 @@
+{
+  "name": "@bunny-agent/angular",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./dist/fesm2022/bunny-agent-angular.mjs",
+  "module": "./dist/fesm2022/bunny-agent-angular.mjs",
+  "types": "./dist/types/bunny-agent-angular.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "ng-packagr -p ng-package.json"
+  },
+  "dependencies": {
+    "@bunny-agent/core": "workspace:*",
+    "tslib": "^2.8.0"
+  },
+  "peerDependencies": {
+    "@angular/core": ">=19.0.0"
+  },
+  "devDependencies": {
+    "@angular/compiler": "^22.0.0",
+    "@angular/compiler-cli": "^22.0.0",
+    "@angular/core": "^22.0.0",
+    "ng-packagr": "^22.0.0",
+    "typescript": "~6.0.0"
+  }
+}

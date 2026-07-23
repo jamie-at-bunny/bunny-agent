@@ -1,0 +1,185 @@
+/*
+ * @bunny-agent/react styles — precompiled, fully namespaced.
+ *
+ * Every utility is compiled with the `ba` prefix (classes look like
+ * `ba:flex`) and no global preflight is emitted, so this file is safe to
+ * load next to any consumer stylesheet or Tailwind setup.
+ *
+ * Theming: override the raw tokens on `.ba-chat` (or any ancestor) —
+ * either the shadcn-style names (--primary, --muted, ...) or the legacy
+ * Bunny names (--ba-accent, --ba-surface, ...), which stay supported:
+ *
+ *   .ba-chat { --ba-accent: #0066ff; --ba-radius: 4px; }
+ *
+ * Markdown rendered by the agent is styled by shadcn/typeset (bundled
+ * below) via the `typeset typeset-docs` container.
+ */
+
+@layer theme, base, components, utilities;
+
+@import "tailwindcss/theme.css" layer(theme) prefix(ba);
+@import "tailwindcss/utilities.css" layer(utilities) prefix(ba);
+
+@import "./typeset.css";
+
+@source "../";
+
+/* Dark mode is opt-in per instance: add the `ba-dark` class on or above the chat root. */
+@custom-variant dark (&:where(.ba-dark, .ba-dark *));
+
+/*
+ * Map Tailwind theme tokens to raw variables (inline: utilities emit
+ * var(--primary) etc., resolved per-instance under .ba-chat).
+ */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+}
+
+@layer components {
+  /* Raw design tokens, defaulting to the Bunny palette. Legacy --ba-* vars
+     act as the public override API and keep existing themes working. */
+  .ba-chat {
+    --background: var(--ba-surface, #ffffff);
+    --foreground: var(--ba-ink, #1f2430);
+    --card: var(--ba-surface, #ffffff);
+    --primary: var(--ba-accent, #ff8a00);
+    --primary-foreground: var(--ba-accent-foreground, #ffffff);
+    --secondary: var(--ba-surface-alt, #f6f7f9);
+    --secondary-foreground: var(--ba-ink, #1f2430);
+    --muted: var(--ba-surface-alt, #f6f7f9);
+    --muted-foreground: var(--ba-ink-soft, #5c6470);
+    --accent: var(--ba-surface-alt, #f6f7f9);
+    --accent-foreground: var(--ba-ink, #1f2430);
+    --destructive: var(--ba-destructive, #dc2626);
+    --border: var(--ba-border, #e4e7ec);
+    --input: var(--ba-border, #e4e7ec);
+    --ring: var(--ba-accent, #ff8a00);
+
+    /* Chart series colors (agent show_chart blocks). The slot ORDER is the
+       colorblind-safety mechanism — validated as a set; override via
+       --ba-chart-N but keep adjacent slots distinguishable. */
+    --chart-1: var(--ba-chart-1, #2a78d6);
+    --chart-2: var(--ba-chart-2, #eb6834);
+    --chart-3: var(--ba-chart-3, #1baf7a);
+    --chart-4: var(--ba-chart-4, #eda100);
+    --chart-5: var(--ba-chart-5, #e87ba4);
+    --chart-6: var(--ba-chart-6, #008300);
+    --chart-7: var(--ba-chart-7, #4a3aa7);
+    --chart-8: var(--ba-chart-8, #e34948);
+
+    font-family: var(
+      --ba-font,
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      sans-serif
+    );
+    color: var(--foreground);
+  }
+
+  /* Same eight hues re-stepped for dark surfaces (validated as a set). */
+  .ba-dark .ba-chat,
+  .ba-chat.ba-dark {
+    --chart-1: var(--ba-chart-1, #3987e5);
+    --chart-2: var(--ba-chart-2, #d95926);
+    --chart-3: var(--ba-chart-3, #199e70);
+    --chart-4: var(--ba-chart-4, #c98500);
+    --chart-5: var(--ba-chart-5, #d55181);
+    --chart-6: var(--ba-chart-6, #008300);
+    --chart-7: var(--ba-chart-7, #9085e9);
+    --chart-8: var(--ba-chart-8, #e66767);
+  }
+
+  /* Scoped mini-preflight (the global Tailwind preflight is intentionally
+     not emitted by this build). */
+  .ba-chat,
+  .ba-chat *,
+  .ba-chat *::before,
+  .ba-chat *::after {
+    box-sizing: border-box;
+    border: 0 solid var(--border);
+  }
+
+  .ba-chat :is(button, input, textarea, select) {
+    font: inherit;
+    color: inherit;
+    background: transparent;
+  }
+
+  .ba-chat button {
+    cursor: pointer;
+  }
+
+  /* :not(.typeset *) keeps typeset's own flow margins intact. */
+  .ba-chat
+    :is(p, h1, h2, h3, h4, h5, h6, ul, ol, figure, blockquote, pre):not(
+      .typeset *
+    ) {
+    margin: 0;
+  }
+
+  .ba-chat img,
+  .ba-chat svg {
+    display: block;
+    max-width: 100%;
+  }
+
+  /* Typeset preset used for agent-rendered markdown. Fonts fall back to the
+     chat font when the consumer doesn't provide Geist. */
+  .typeset-docs {
+    --typeset-font-body: var(--font-geist, inherit);
+    --typeset-font-heading: var(--font-geist, inherit);
+    --typeset-font-mono: var(
+      --font-geist-mono,
+      ui-monospace,
+      SFMono-Regular,
+      Menlo,
+      monospace
+    );
+    --typeset-size: 15px;
+    --typeset-leading: 1.75;
+    --typeset-flow: 1.25em;
+  }
+}
+
+/* Custom utilities used by the vendored shadcn components. */
+@utility scroll-fade-b {
+  mask-image: linear-gradient(
+    to bottom,
+    black 0%,
+    black calc(100% - 1.5rem),
+    transparent 100%
+  );
+}
+
+@utility scrollbar-thin {
+  scrollbar-width: thin;
+}
+
+@utility scrollbar-gutter-stable {
+  scrollbar-gutter: stable;
+}
+
+@utility scrollbar-thumb-transparent {
+  --ba-scrollbar-thumb: transparent;
+  scrollbar-color: var(--ba-scrollbar-thumb, auto)
+    var(--ba-scrollbar-track, transparent);
+}
+
+@utility scrollbar-track-transparent {
+  --ba-scrollbar-track: transparent;
+}

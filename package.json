@@ -1,0 +1,13 @@
+{
+  "name": "bunny-agent",
+  "private": true,
+  "scripts": {
+    "build": "pnpm -r build",
+    "dev": "pnpm --parallel --filter @bunny-agent/server --filter @bunny-agent/web dev",
+    "mcp": "pnpm --filter @bunny-agent/mcp start"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  },
+  "packageManager": "pnpm@10.23.0"
+}
