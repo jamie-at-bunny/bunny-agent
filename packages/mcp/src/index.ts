@@ -6,13 +6,13 @@
  *
  * Auth: BUNNY_API_KEY env var, or the bunny CLI's default profile.
  */
+import { allTools, BunnyClient, toolsByName } from "@bunny.net/agent-tools";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
-import { BunnyClient, allTools, toolsByName } from "@bunny-agent/tools";
 
 const server = new Server(
   { name: "bunny-agent", version: "0.1.0" },
@@ -26,7 +26,8 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
     inputSchema: tool.input_schema,
     annotations: {
       destructiveHint: tool.destructive ?? false,
-      readOnlyHint: tool.name.startsWith("list_") || tool.name.startsWith("get_"),
+      readOnlyHint:
+        tool.name.startsWith("list_") || tool.name.startsWith("get_"),
     },
   })),
 }));
@@ -41,13 +42,21 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   }
   try {
     const client = new BunnyClient();
-    const result = await tool.run(client, (request.params.arguments ?? {}) as Record<string, any>);
+    const result = await tool.run(
+      client,
+      (request.params.arguments ?? {}) as Record<string, any>,
+    );
     return {
       content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
     };
   } catch (error) {
     return {
-      content: [{ type: "text", text: error instanceof Error ? error.message : String(error) }],
+      content: [
+        {
+          type: "text",
+          text: error instanceof Error ? error.message : String(error),
+        },
+      ],
       isError: true,
     };
   }

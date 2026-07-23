@@ -1,7 +1,8 @@
 /**
- * @bunny-agent/handler — the backend half of the Bunny Agent. Runs the
- * model tool loop against the Bunny API via OpenRouter. This is the only
- * package that touches secrets (OpenRouter + Bunny keys).
+ * @bunny.net/agent — the backend half of the Bunny Agent, and the one package
+ * a server needs: it runs the model tool loop against the Bunny API via
+ * OpenRouter and re-exports the tool registry and the wire contract. This is
+ * the only package that touches secrets (OpenRouter + Bunny keys).
  *
  * Framework-agnostic: handlers speak web-standard Request/Response, so they
  * mount in Hono, Next.js route handlers, Express (via adapters), Bun, etc.
@@ -9,23 +10,45 @@
  *   const agent = createBunnyAgentHandler();
  *   app.post("/api/chat", (c) => agent.chat(c.req.raw));
  *   app.get("/api/status", () => agent.status());
+ *
+ * The browser side lives in @bunny.net/agent-core (framework-agnostic) with
+ * @bunny.net/agent-react and @bunny.net/agent-angular as thin wrappers.
  */
-import OpenAI from "openai";
+
 import type {
   AgentEvent,
   AgentStatus,
   ChatRequestBody,
   ToolErrorEvent,
   ToolSuccessEvent,
-} from "@bunny-agent/shared";
+} from "@bunny.net/agent-shared";
 import {
   AGENT_SYSTEM_PROMPT,
-  BunnyClient,
   allTools,
+  BunnyClient,
   resolveApiKey,
   toolsByName,
-} from "@bunny-agent/tools";
-import { UI_TOOLS_GUIDANCE, buildUIBlock, uiToolNames, uiTools } from "./ui-tools.js";
+} from "@bunny.net/agent-tools";
+import OpenAI from "openai";
+import {
+  buildUIBlock,
+  UI_TOOLS_GUIDANCE,
+  uiToolNames,
+  uiTools,
+} from "./ui-tools.js";
+
+/** The wire contract, so a backend can type its hooks off this package alone. */
+export type * from "@bunny.net/agent-shared";
+/** The tool registry, for callers that inspect, filter or extend it. */
+export type { ToolDefinition } from "@bunny.net/agent-tools";
+export {
+  AGENT_SYSTEM_PROMPT,
+  allTools,
+  BunnyApiError,
+  BunnyClient,
+  resolveApiKey,
+  toolsByName,
+} from "@bunny.net/agent-tools";
 
 const OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1";
 
@@ -136,17 +159,23 @@ export function createBunnyAgentHandler(
         ...({ reasoning: { enabled: true } } as Record<string, unknown>),
       });
 
-      stream.on("content", (delta) => void onEvent({ type: "text", text: delta }));
+      stream.on(
+        "content",
+        (delta) => void onEvent({ type: "text", text: delta }),
+      );
 
       const completion = await stream.finalChatCompletion();
       const choice = completion.choices[0];
       history.push(choice.message);
 
       const toolCalls = (choice.message.tool_calls ?? []).filter(
-        (call): call is OpenAI.Chat.Completions.ChatCompletionMessageFunctionToolCall =>
+        (
+          call,
+        ): call is OpenAI.Chat.Completions.ChatCompletionMessageFunctionToolCall =>
           call.type === "function",
       );
-      if (choice.finish_reason !== "tool_calls" || toolCalls.length === 0) break;
+      if (choice.finish_reason !== "tool_calls" || toolCalls.length === 0)
+        break;
 
       for (const call of toolCalls) {
         const name = call.function.name;
@@ -170,7 +199,8 @@ export function createBunnyAgentHandler(
                 "Rendered to the user as an interactive component. Do not repeat its contents as text.",
             });
           } catch (error) {
-            const messageText = error instanceof Error ? error.message : String(error);
+            const messageText =
+              error instanceof Error ? error.message : String(error);
             history.push({
               role: "tool",
               tool_call_id: call.id,
@@ -191,15 +221,27 @@ export function createBunnyAgentHandler(
             content: JSON.stringify(result),
           });
           await onEvent({ type: "tool_end", name, ok: true, input, result });
-          await runHook(options.onToolSuccess, { sessionId, name, input, result });
+          await runHook(options.onToolSuccess, {
+            sessionId,
+            name,
+            input,
+            result,
+          });
         } catch (error) {
-          const messageText = error instanceof Error ? error.message : String(error);
+          const messageText =
+            error instanceof Error ? error.message : String(error);
           history.push({
             role: "tool",
             tool_call_id: call.id,
             content: `Error: ${messageText}`,
           });
-          await onEvent({ type: "tool_end", name, ok: false, input, error: messageText });
+          await onEvent({
+            type: "tool_end",
+            name,
+            ok: false,
+            input,
+            error: messageText,
+          });
           await runHook(options.onToolError, {
             sessionId,
             name,
@@ -221,9 +263,12 @@ export function createBunnyAgentHandler(
         .json()
         .catch(() => ({}))) as Partial<ChatRequestBody>;
       if (!sessionId || !message?.trim()) {
-        return Response.json({ error: "sessionId and message are required" }, {
-          status: 400,
-        });
+        return Response.json(
+          { error: "sessionId and message are required" },
+          {
+            status: 400,
+          },
+        );
       }
       if (!openRouterConfigured()) {
         return Response.json(
@@ -239,7 +284,9 @@ export function createBunnyAgentHandler(
       const stream = new ReadableStream({
         async start(controller) {
           const emit = (event: AgentEvent) =>
-            controller.enqueue(encoder.encode(`data: ${JSON.stringify(event)}\n\n`));
+            controller.enqueue(
+              encoder.encode(`data: ${JSON.stringify(event)}\n\n`),
+            );
           try {
             await runTurn(sessionId, message, emit);
           } catch (error) {

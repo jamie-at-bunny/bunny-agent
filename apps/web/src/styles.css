@@ -1,9 +1,9 @@
 /* Geist fonts for shadcn/typeset (typeset.css itself ships inside
-   @bunny-agent/react/styles.css, imported in main.tsx). */
+   @bunny.net/agent-react/styles.css, imported in main.tsx). */
 @import "@fontsource-variable/geist";
 @import "@fontsource-variable/geist-mono";
 
-/* Layered so it never overrides @bunny-agent/react utilities or typeset
+/* Layered so it never overrides @bunny.net/agent-react utilities or typeset
    (unlayered rules always beat layered ones). */
 @layer base {
   * {

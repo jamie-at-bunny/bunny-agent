@@ -23,7 +23,7 @@ export const listContainerApps = defineTool({
     const apps = await client.mc<
       ContainerAppListItem[] | components["schemas"]["ListApplicationsResponse"]
     >("GET", "/apps");
-    const list = Array.isArray(apps) ? apps : apps.items ?? [];
+    const list = Array.isArray(apps) ? apps : (apps.items ?? []);
     return list.map(summarizeListItem);
   },
 });
@@ -38,7 +38,8 @@ export const getContainerApp = defineTool({
       app_id: { type: "string", description: "Magic Containers app ID" },
       include_overview: {
         type: "boolean",
-        description: "Also fetch live metrics from the app overview (default false)",
+        description:
+          "Also fetch live metrics from the app overview (default false)",
       },
     },
     required: ["app_id"],
@@ -55,7 +56,10 @@ export const getContainerApp = defineTool({
       status: app.status,
       runtime_type: app.runtimeType,
       endpoint: app.displayEndpoint
-        ? { address: app.displayEndpoint.address, type: app.displayEndpoint.type }
+        ? {
+            address: app.displayEndpoint.address,
+            type: app.displayEndpoint.type,
+          }
         : null,
       regions: app.regionSettings
         ? {
@@ -119,7 +123,10 @@ export const deployContainerApp = defineTool({
   input_schema: {
     type: "object",
     properties: {
-      app_id: { type: "string", description: "Magic Containers app ID to deploy" },
+      app_id: {
+        type: "string",
+        description: "Magic Containers app ID to deploy",
+      },
     },
     required: ["app_id"],
     additionalProperties: false,
@@ -137,7 +144,10 @@ export const restartContainerApp = defineTool({
   input_schema: {
     type: "object",
     properties: {
-      app_id: { type: "string", description: "Magic Containers app ID to restart" },
+      app_id: {
+        type: "string",
+        description: "Magic Containers app ID to restart",
+      },
     },
     required: ["app_id"],
     additionalProperties: false,
@@ -156,7 +166,10 @@ export const deleteContainerApp = defineTool({
   input_schema: {
     type: "object",
     properties: {
-      app_id: { type: "string", description: "Magic Containers app ID to delete" },
+      app_id: {
+        type: "string",
+        description: "Magic Containers app ID to delete",
+      },
     },
     required: ["app_id"],
     additionalProperties: false,

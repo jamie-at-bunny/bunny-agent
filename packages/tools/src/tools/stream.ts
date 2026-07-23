@@ -78,7 +78,7 @@ export const listVideoLibraries = defineTool({
     const libraries = await client.main<
       VideoLibrary[] | core["schemas"]["PaginationListModelOfVideoLibraryModel"]
     >("GET", "/videolibrary?page=1&perPage=100");
-    const list = Array.isArray(libraries) ? libraries : libraries.Items ?? [];
+    const list = Array.isArray(libraries) ? libraries : (libraries.Items ?? []);
     return list.map(summarizeLibrary);
   },
 });

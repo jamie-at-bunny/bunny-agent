@@ -1,16 +1,16 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { Avatar as AvatarPrimitive } from "@base-ui/react/avatar"
+import { Avatar as AvatarPrimitive } from "@base-ui/react/avatar";
+import type * as React from "react";
 
-import { cn } from "../lib/utils"
+import { cn } from "../lib/utils";
 
 function Avatar({
   className,
   size = "default",
   ...props
 }: AvatarPrimitive.Root.Props & {
-  size?: "default" | "sm" | "lg"
+  size?: "default" | "sm" | "lg";
 }) {
   return (
     <AvatarPrimitive.Root
@@ -18,11 +18,11 @@ function Avatar({
       data-size={size}
       className={cn(
         "ba:group/avatar ba:relative ba:flex ba:size-8 ba:shrink-0 ba:rounded-full ba:select-none ba:after:absolute ba:after:inset-0 ba:after:rounded-full ba:after:border ba:after:border-border ba:after:mix-blend-darken ba:data-[size=lg]:size-10 ba:data-[size=sm]:size-6 ba:dark:after:mix-blend-lighten",
-        className
+        className,
       )}
       {...props}
     />
-  )
+  );
 }
 
 function AvatarImage({ className, ...props }: AvatarPrimitive.Image.Props) {
@@ -31,11 +31,11 @@ function AvatarImage({ className, ...props }: AvatarPrimitive.Image.Props) {
       data-slot="avatar-image"
       className={cn(
         "ba:aspect-square ba:size-full ba:rounded-full ba:object-cover",
-        className
+        className,
       )}
       {...props}
     />
-  )
+  );
 }
 
 function AvatarFallback({
@@ -47,11 +47,11 @@ function AvatarFallback({
       data-slot="avatar-fallback"
       className={cn(
         "ba:flex ba:size-full ba:items-center ba:justify-center ba:rounded-full ba:bg-muted ba:text-sm ba:text-muted-foreground ba:group-data-[size=sm]/avatar:text-xs",
-        className
+        className,
       )}
       {...props}
     />
-  )
+  );
 }
 
 function AvatarBadge({ className, ...props }: React.ComponentProps<"span">) {
@@ -63,11 +63,11 @@ function AvatarBadge({ className, ...props }: React.ComponentProps<"span">) {
         "ba:group-data-[size=sm]/avatar:size-2 ba:group-data-[size=sm]/avatar:[&>svg]:hidden",
         "ba:group-data-[size=default]/avatar:size-2.5 ba:group-data-[size=default]/avatar:[&>svg]:size-2",
         "ba:group-data-[size=lg]/avatar:size-3 ba:group-data-[size=lg]/avatar:[&>svg]:size-2",
-        className
+        className,
       )}
       {...props}
     />
-  )
+  );
 }
 
 function AvatarGroup({ className, ...props }: React.ComponentProps<"div">) {
@@ -76,11 +76,11 @@ function AvatarGroup({ className, ...props }: React.ComponentProps<"div">) {
       data-slot="avatar-group"
       className={cn(
         "ba:group/avatar-group ba:flex ba:-space-x-2 ba:*:data-[slot=avatar]:ring-2 ba:*:data-[slot=avatar]:ring-background",
-        className
+        className,
       )}
       {...props}
     />
-  )
+  );
 }
 
 function AvatarGroupCount({
@@ -92,19 +92,18 @@ function AvatarGroupCount({
       data-slot="avatar-group-count"
       className={cn(
         "ba:relative ba:flex ba:size-8 ba:shrink-0 ba:items-center ba:justify-center ba:rounded-full ba:bg-muted ba:text-sm ba:text-muted-foreground ba:ring-2 ba:ring-background ba:group-has-data-[size=lg]/avatar-group:size-10 ba:group-has-data-[size=sm]/avatar-group:size-6 ba:[&>svg]:size-4 ba:group-has-data-[size=lg]/avatar-group:[&>svg]:size-5 ba:group-has-data-[size=sm]/avatar-group:[&>svg]:size-3",
-        className
+        className,
       )}
       {...props}
     />
-  )
+  );
 }
 
 export {
   Avatar,
-  AvatarImage,
+  AvatarBadge,
   AvatarFallback,
   AvatarGroup,
   AvatarGroupCount,
-  AvatarBadge,
-}
-
+  AvatarImage,
+};

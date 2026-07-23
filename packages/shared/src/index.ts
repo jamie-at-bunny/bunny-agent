@@ -1,5 +1,5 @@
 /**
- * @bunny-agent/shared — the wire contract between the backend handler and
+ * @bunny.net/agent-shared — the wire contract between the backend handler and
  * every frontend. No dependencies; safe to import anywhere (server, browser,
  * React, Angular, MCP glue).
  */

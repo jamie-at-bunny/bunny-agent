@@ -7,7 +7,8 @@ const summarize = (zone: PullZone) => ({
   id: zone.Id,
   name: zone.Name,
   origin_url: zone.OriginUrl || null,
-  storage_zone_id: zone.StorageZoneId && zone.StorageZoneId > 0 ? zone.StorageZoneId : null,
+  storage_zone_id:
+    zone.StorageZoneId && zone.StorageZoneId > 0 ? zone.StorageZoneId : null,
   enabled: zone.Enabled,
   hostnames: (zone.Hostnames ?? []).map((h) => h.Value),
   monthly_bandwidth_used_bytes: zone.MonthlyBandwidthUsed,
@@ -23,7 +24,7 @@ export const listPullZones = defineTool({
       "GET",
       "/pullzone?page=1&perPage=100",
     );
-    const list = Array.isArray(zones) ? zones : zones.Items ?? [];
+    const list = Array.isArray(zones) ? zones : (zones.Items ?? []);
     return list.map(summarize);
   },
 });
@@ -37,15 +38,18 @@ export const createPullZone = defineTool({
     properties: {
       name: {
         type: "string",
-        description: "Globally unique pull zone name — becomes <name>.b-cdn.net",
+        description:
+          "Globally unique pull zone name — becomes <name>.b-cdn.net",
       },
       origin_url: {
         type: "string",
-        description: "Origin URL to pull content from, e.g. https://example.com",
+        description:
+          "Origin URL to pull content from, e.g. https://example.com",
       },
       storage_zone_id: {
         type: "number",
-        description: "Storage zone ID to serve files from (instead of an origin URL)",
+        description:
+          "Storage zone ID to serve files from (instead of an origin URL)",
       },
     },
     required: ["name"],
@@ -58,7 +62,9 @@ export const createPullZone = defineTool({
     const zone = await client.main<PullZone>("POST", "/pullzone", {
       Name: input.name,
       ...(input.origin_url ? { OriginUrl: input.origin_url } : {}),
-      ...(input.storage_zone_id ? { StorageZoneId: input.storage_zone_id } : {}),
+      ...(input.storage_zone_id
+        ? { StorageZoneId: input.storage_zone_id }
+        : {}),
     });
     return { ...summarize(zone), cdn_url: `https://${input.name}.b-cdn.net` };
   },
@@ -72,7 +78,10 @@ export const deletePullZone = defineTool({
   input_schema: {
     type: "object",
     properties: {
-      pull_zone_id: { type: "number", description: "Numeric pull zone ID to delete" },
+      pull_zone_id: {
+        type: "number",
+        description: "Numeric pull zone ID to delete",
+      },
     },
     required: ["pull_zone_id"],
     additionalProperties: false,

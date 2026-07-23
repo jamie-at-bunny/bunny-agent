@@ -1,5 +1,5 @@
 {
-  "name": "@bunny-agent/server",
+  "name": "bunny-agent-server",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -9,7 +9,7 @@
     "start": "node --env-file-if-exists=../../.env dist/index.js"
   },
   "dependencies": {
-    "@bunny-agent/handler": "workspace:*",
+    "@bunny.net/agent": "workspace:*",
     "@hono/node-server": "^1.14.0",
     "hono": "^4.7.0"
   },

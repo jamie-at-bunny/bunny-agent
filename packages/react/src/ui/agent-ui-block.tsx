@@ -5,14 +5,14 @@
  * action buttons, a choices form, and charts. Clicks/submits go through the
  * chat's own `send`, so a block interaction is just the user's next message.
  */
-import { useState, type ReactNode } from "react";
-import type { UIBlock } from "@bunny-agent/core";
+import type { UIBlock } from "@bunny.net/agent-core";
+import { type ReactNode, useState } from "react";
 
 import { cn } from "../lib/utils";
 import { Bubble, BubbleContent } from "./bubble";
 import { Button } from "./button";
-import { Message, MessageContent, MessageGroup } from "./message";
 import { AgentChart } from "./chart";
+import { Message, MessageContent, MessageGroup } from "./message";
 
 export interface AgentUIBlockProps {
   block: UIBlock;
@@ -24,7 +24,12 @@ export interface AgentUIBlockProps {
   userAvatar?: ReactNode;
 }
 
-export function AgentUIBlock({ block, onSend, busy, userAvatar }: AgentUIBlockProps) {
+export function AgentUIBlock({
+  block,
+  onSend,
+  busy,
+  userAvatar,
+}: AgentUIBlockProps) {
   switch (block.type) {
     case "actions":
       return (
@@ -66,8 +71,11 @@ function ActionsBlock({
           )}
           {block.actions.map((action, i) => (
             <Bubble
+              // biome-ignore lint/suspicious/noArrayIndexKey: a static list off one UI block — never reordered or spliced.
               key={i}
-              variant={action.variant === "destructive" ? "destructive" : "outline"}
+              variant={
+                action.variant === "destructive" ? "destructive" : "outline"
+              }
               align="end"
             >
               <BubbleContent
@@ -113,10 +121,15 @@ function ChoicesBlock({
   const submit = () => {
     const selection = [...selected]
       .sort((a, b) => a - b)
-      .map((i) => block.choices[i]!.value ?? block.choices[i]!.label)
+      .map((i) => block.choices[i].value ?? block.choices[i].label)
       .join(", ");
     if (!selection) return;
-    onSend((block.messageTemplate ?? "{selection}").replaceAll("{selection}", selection));
+    onSend(
+      (block.messageTemplate ?? "{selection}").replaceAll(
+        "{selection}",
+        selection,
+      ),
+    );
   };
 
   return (
@@ -133,6 +146,7 @@ function ChoicesBlock({
       <div className="ba:flex ba:flex-col ba:gap-1">
         {block.choices.map((choice, i) => (
           <label
+            // biome-ignore lint/suspicious/noArrayIndexKey: a static list off one UI block — the index IS the selection identity (see `selected`).
             key={i}
             className={cn(
               "ba:flex ba:cursor-pointer ba:items-start ba:gap-2.5 ba:rounded-lg ba:px-2 ba:py-1.5 ba:hover:bg-muted",

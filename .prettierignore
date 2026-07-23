@@ -1,0 +1,10 @@
+# Dependencies and lockfiles
+node_modules
+pnpm-lock.yaml
+
+# Build output
+dist
+
+# Vendored / third-party
+**/*.min.*
+coverage

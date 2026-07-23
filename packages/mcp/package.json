@@ -1,6 +1,9 @@
 {
-  "name": "@bunny-agent/mcp",
+  "name": "@bunny.net/agent-mcp",
   "version": "0.1.0",
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "bin": {
     "bunny-agent-mcp": "./dist/index.js"
@@ -10,7 +13,7 @@
     "start": "node dist/index.js"
   },
   "dependencies": {
-    "@bunny-agent/tools": "workspace:*",
+    "@bunny.net/agent-tools": "workspace:*",
     "@modelcontextprotocol/sdk": "^1.12.0"
   },
   "devDependencies": {

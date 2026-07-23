@@ -50,11 +50,8 @@ export const listDnsZones = defineTool({
   run: async (client) => {
     const zones = await client.main<
       DnsZone[] | components["schemas"]["PaginationListModelOfDnsZoneModel"]
-    >(
-      "GET",
-      "/dnszone?page=1&perPage=100",
-    );
-    const list = Array.isArray(zones) ? zones : zones.Items ?? [];
+    >("GET", "/dnszone?page=1&perPage=100");
+    const list = Array.isArray(zones) ? zones : (zones.Items ?? []);
     return list.map(summarizeZone);
   },
 });
@@ -163,7 +160,10 @@ export const deleteDnsRecord = defineTool({
     type: "object",
     properties: {
       zone_id: { type: "number", description: "Numeric DNS zone ID" },
-      record_id: { type: "number", description: "Numeric DNS record ID to delete" },
+      record_id: {
+        type: "number",
+        description: "Numeric DNS record ID to delete",
+      },
     },
     required: ["zone_id", "record_id"],
     additionalProperties: false,
@@ -173,7 +173,11 @@ export const deleteDnsRecord = defineTool({
       "DELETE",
       `/dnszone/${input.zone_id}/records/${input.record_id}`,
     );
-    return { deleted: true, zone_id: input.zone_id, record_id: input.record_id };
+    return {
+      deleted: true,
+      zone_id: input.zone_id,
+      record_id: input.record_id,
+    };
   },
 });
 

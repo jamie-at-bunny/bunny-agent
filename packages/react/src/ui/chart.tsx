@@ -7,8 +7,8 @@
  * via `--ba-chart-N`); the palette order is CVD-validated, so colors are
  * assigned strictly by series index.
  */
+import type { UIBlock } from "@bunny.net/agent-core";
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { UIBlock } from "@bunny-agent/core";
 
 import { cn } from "../lib/utils";
 
@@ -51,7 +51,8 @@ function niceTicks(min: number, max: number, count = 4): number[] {
   const magnitude = 10 ** Math.floor(Math.log10(rawStep));
   const residual = rawStep / magnitude;
   const step =
-    (residual >= 5 ? 10 : residual >= 2 ? 5 : residual >= 1 ? 2 : 1) * magnitude;
+    (residual >= 5 ? 10 : residual >= 2 ? 5 : residual >= 1 ? 2 : 1) *
+    magnitude;
   const start = Math.floor(min / step) * step;
   const ticks: number[] = [];
   for (let v = start; v <= max + step * 0.999; v += step) {
@@ -115,8 +116,8 @@ export function AgentChart({ block }: { block: ChartBlock }) {
       rows,
       series,
       ticks,
-      yMin: ticks[0]!,
-      yMax: ticks[ticks.length - 1]!,
+      yMin: ticks[0],
+      yMax: ticks[ticks.length - 1],
     };
   }, [block]);
 
@@ -257,12 +258,14 @@ export function AgentChart({ block }: { block: ChartBlock }) {
                   const gap = series.length > 1 ? 2 : 0;
                   const barWidth =
                     (groupWidth - gap * (series.length - 1)) / series.length;
-                  const groupStart = MARGIN.left + band * rowIndex + band * 0.15;
+                  const groupStart =
+                    MARGIN.left + band * rowIndex + band * 0.15;
                   return row.values.map((value, seriesIndex) => {
                     const top = Math.min(yPos(value), yPos(0));
                     const barHeight = Math.abs(yPos(value) - yPos(0));
                     return (
                       <path
+                        // biome-ignore lint/suspicious/noArrayIndexKey: bar geometry is positional — row/series index is the identity.
                         key={`${rowIndex}-${seriesIndex}`}
                         d={barPath(
                           groupStart + seriesIndex * (barWidth + gap),
@@ -270,14 +273,15 @@ export function AgentChart({ block }: { block: ChartBlock }) {
                           Math.max(1, barWidth),
                           Math.max(barHeight, value === 0 ? 0 : 1),
                         )}
-                        fill={series[seriesIndex]!.color}
+                        fill={series[seriesIndex].color}
                       />
                     );
                   });
                 })
               : series.map((s, seriesIndex) => {
                   const points = rows.map(
-                    (row, i) => [xPos(i), yPos(row.values[seriesIndex]!)] as const,
+                    (row, i) =>
+                      [xPos(i), yPos(row.values[seriesIndex])] as const,
                   );
                   const line = points
                     .map(([x, y], i) => `${i === 0 ? "M" : "L"}${x},${y}`)
@@ -286,9 +290,9 @@ export function AgentChart({ block }: { block: ChartBlock }) {
                     <g key={s.key}>
                       {block.kind === "area" && (
                         <path
-                          d={`${line}L${points[points.length - 1]![0]},${yPos(
+                          d={`${line}L${points[points.length - 1][0]},${yPos(
                             Math.max(0, yMin),
-                          )}L${points[0]![0]},${yPos(Math.max(0, yMin))}Z`}
+                          )}L${points[0][0]},${yPos(Math.max(0, yMin))}Z`}
                           fill={s.color}
                           opacity={0.12}
                         />
@@ -304,7 +308,7 @@ export function AgentChart({ block }: { block: ChartBlock }) {
                       {hoverIndex !== null && (
                         <circle
                           cx={xPos(hoverIndex)}
-                          cy={yPos(rows[hoverIndex]!.values[seriesIndex]!)}
+                          cy={yPos(rows[hoverIndex].values[seriesIndex])}
                           r={4}
                           fill={s.color}
                           stroke="var(--background)"
@@ -327,7 +331,7 @@ export function AgentChart({ block }: { block: ChartBlock }) {
                 fontSize={10}
                 style={{ fill: "var(--muted-foreground)" }}
               >
-                {formatXLabel(rows[index]!.x)}
+                {formatXLabel(rows[index].x)}
               </text>
             ))}
           </svg>
@@ -356,7 +360,7 @@ export function AgentChart({ block }: { block: ChartBlock }) {
                   className={cn("ba:font-medium ba:text-foreground")}
                   style={{ fontVariantNumeric: "tabular-nums" }}
                 >
-                  {formatValue(hovered.values[i]!)}
+                  {formatValue(hovered.values[i])}
                 </span>
               </div>
             ))}

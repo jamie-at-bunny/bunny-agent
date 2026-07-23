@@ -1,7 +1,7 @@
 /**
- * @bunny-agent/core — framework-agnostic frontend core for the Bunny Agent.
+ * @bunny.net/agent-core — framework-agnostic frontend core for the Bunny Agent.
  * Pure TypeScript + fetch: usable from React, Angular, Vue, Svelte, web
- * components, or plain scripts. Pair with `@bunny-agent/core/styles.css`
+ * components, or plain scripts. Pair with `@bunny.net/agent-core/styles.css`
  * (or your own stylesheet) for the look.
  */
 import type {
@@ -10,7 +10,7 @@ import type {
   ToolErrorEvent,
   ToolSuccessEvent,
   UIBlock,
-} from "@bunny-agent/shared";
+} from "@bunny.net/agent-shared";
 
 export type {
   AgentEvent,
@@ -21,7 +21,7 @@ export type {
   UIBlock,
   UIChartSeries,
   UIChoice,
-} from "@bunny-agent/shared";
+} from "@bunny.net/agent-shared";
 
 export interface BunnyAgentClientOptions {
   /** Origin of the agent server, e.g. "https://agent.bunny.net". Defaults to same-origin. */
@@ -119,7 +119,8 @@ export class BunnyAgentClient {
     if (!res.ok) {
       const body = await res.json().catch(() => null);
       throw new Error(
-        (body as { error?: string } | null)?.error ?? `Request failed (${res.status})`,
+        (body as { error?: string } | null)?.error ??
+          `Request failed (${res.status})`,
       );
     }
     if (!res.body) throw new Error("No response body");
@@ -133,8 +134,9 @@ export class BunnyAgentClient {
       if (done) break;
       buffer += decoder.decode(value, { stream: true });
 
-      let boundary;
-      while ((boundary = buffer.indexOf("\n\n")) !== -1) {
+      while (true) {
+        const boundary = buffer.indexOf("\n\n");
+        if (boundary === -1) break;
         const chunk = buffer.slice(0, boundary);
         buffer = buffer.slice(boundary + 2);
         const dataLine = chunk
@@ -179,10 +181,18 @@ export function createSessionId(): string {
 export type ChatItem =
   | { kind: "user"; text: string }
   | { kind: "assistant"; text: string }
-  | { kind: "tool"; name: string; status: "running" | "ok" | "error"; error?: string }
+  | {
+      kind: "tool";
+      name: string;
+      status: "running" | "ok" | "error";
+      error?: string;
+    }
   | { kind: "ui"; block: UIBlock };
 
-export function reduceChatItems(items: ChatItem[], event: AgentEvent): ChatItem[] {
+export function reduceChatItems(
+  items: ChatItem[],
+  event: AgentEvent,
+): ChatItem[] {
   const next = [...items];
   if (event.type === "text") {
     const last = next[next.length - 1];
@@ -196,8 +206,16 @@ export function reduceChatItems(items: ChatItem[], event: AgentEvent): ChatItem[
   } else if (event.type === "tool_end") {
     for (let i = next.length - 1; i >= 0; i--) {
       const item = next[i];
-      if (item.kind === "tool" && item.name === event.name && item.status === "running") {
-        next[i] = { ...item, status: event.ok ? "ok" : "error", error: event.error };
+      if (
+        item.kind === "tool" &&
+        item.name === event.name &&
+        item.status === "running"
+      ) {
+        next[i] = {
+          ...item,
+          status: event.ok ? "ok" : "error",
+          error: event.error,
+        };
         break;
       }
     }
@@ -225,7 +243,10 @@ export function restoreChatItems(items: unknown): ChatItem[] {
       typeof candidate.text === "string"
     ) {
       restored.push({ kind: candidate.kind, text: candidate.text });
-    } else if (candidate.kind === "tool" && typeof candidate.name === "string") {
+    } else if (
+      candidate.kind === "tool" &&
+      typeof candidate.name === "string"
+    ) {
       restored.push(
         candidate.status === "running"
           ? { ...candidate, status: "error", error: "Interrupted" }
@@ -235,7 +256,9 @@ export function restoreChatItems(items: unknown): ChatItem[] {
       candidate.kind === "ui" &&
       typeof candidate.block === "object" &&
       candidate.block !== null &&
-      ["actions", "choices", "chart"].includes((candidate.block as UIBlock).type)
+      ["actions", "choices", "chart"].includes(
+        (candidate.block as UIBlock).type,
+      )
     ) {
       restored.push({ kind: "ui", block: candidate.block });
     }

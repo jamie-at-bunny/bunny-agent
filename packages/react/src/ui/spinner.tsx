@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import { Loader2Icon } from "lucide-react"
+import { Loader2Icon } from "lucide-react";
 
-import { cn } from "../lib/utils"
+import { cn } from "../lib/utils";
 
 function Spinner({ className, ...props }: React.ComponentProps<"svg">) {
   return (
@@ -13,7 +13,7 @@ function Spinner({ className, ...props }: React.ComponentProps<"svg">) {
       className={cn("ba:size-4 ba:animate-spin", className)}
       {...props}
     />
-  )
+  );
 }
 
-export { Spinner }
+export { Spinner };

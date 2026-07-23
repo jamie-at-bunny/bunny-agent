@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { mergeProps } from "@base-ui/react/merge-props"
-import { useRender } from "@base-ui/react/use-render"
-import { cva, type VariantProps } from "class-variance-authority"
+import { mergeProps } from "@base-ui/react/merge-props";
+import { useRender } from "@base-ui/react/use-render";
+import { cva, type VariantProps } from "class-variance-authority";
+import type * as React from "react";
 
-import { cn } from "../lib/utils"
+import { cn } from "../lib/utils";
 
 const markerVariants = cva(
   "ba:group/marker ba:relative ba:flex ba:min-h-4 ba:w-full ba:items-center ba:gap-2 ba:text-left ba:text-sm ba:text-muted-foreground ba:[&_svg:not([class*='size-'])]:size-4 ba:[a]:underline ba:[a]:underline-offset-3 ba:[a]:hover:text-foreground",
@@ -18,8 +18,8 @@ const markerVariants = cva(
         border: "ba:border-b ba:border-border ba:pb-2",
       },
     },
-  }
-)
+  },
+);
 
 function Marker({
   className,
@@ -33,14 +33,14 @@ function Marker({
       {
         className: cn(markerVariants({ variant, className })),
       },
-      props
+      props,
     ),
     render,
     state: {
       slot: "marker",
       variant,
     },
-  })
+  });
 }
 
 function MarkerIcon({ className, ...props }: React.ComponentProps<"span">) {
@@ -50,11 +50,11 @@ function MarkerIcon({ className, ...props }: React.ComponentProps<"span">) {
       aria-hidden="true"
       className={cn(
         "ba:size-4 ba:shrink-0 ba:[&_svg:not([class*='size-'])]:size-4",
-        className
+        className,
       )}
       {...props}
     />
-  )
+  );
 }
 
 function MarkerContent({ className, ...props }: React.ComponentProps<"span">) {
@@ -63,12 +63,11 @@ function MarkerContent({ className, ...props }: React.ComponentProps<"span">) {
       data-slot="marker-content"
       className={cn(
         "ba:min-w-0 ba:wrap-break-word ba:group-data-[variant=separator]/marker:flex-none ba:group-data-[variant=separator]/marker:text-center ba:*:[a]:underline ba:*:[a]:underline-offset-3 ba:*:[a]:hover:text-foreground",
-        className
+        className,
       )}
       {...props}
     />
-  )
+  );
 }
 
-export { Marker, MarkerIcon, MarkerContent, markerVariants }
-
+export { Marker, MarkerContent, MarkerIcon, markerVariants };

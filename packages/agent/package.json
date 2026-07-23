@@ -1,6 +1,9 @@
 {
-  "name": "@bunny-agent/handler",
+  "name": "@bunny.net/agent",
   "version": "0.1.0",
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -14,8 +17,8 @@
     "build": "tsc -p tsconfig.json"
   },
   "dependencies": {
-    "@bunny-agent/shared": "workspace:*",
-    "@bunny-agent/tools": "workspace:*",
+    "@bunny.net/agent-shared": "workspace:*",
+    "@bunny.net/agent-tools": "workspace:*",
     "openai": "^6.48.0"
   },
   "devDependencies": {

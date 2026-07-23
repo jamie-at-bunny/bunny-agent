@@ -1,15 +1,17 @@
+// biome-ignore-all lint/suspicious/noArrayIndexKey: the transcript is append-only — reduceChatItems only pushes, or mutates the last item in place — so an item's index is stable for its lifetime and there is no id to key off.
+
 "use client";
 
 import {
+  type AgentStatus,
   BunnyAgentClient,
+  type ChatItem,
   createSessionId,
   reduceChatItems,
   restoreChatItems,
-  type AgentStatus,
-  type ChatItem,
   type ToolErrorEvent,
   type ToolSuccessEvent,
-} from "@bunny-agent/core";
+} from "@bunny.net/agent-core";
 import { CheckIcon, SquarePenIcon, XIcon } from "lucide-react";
 import {
   useEffect,
@@ -21,6 +23,7 @@ import {
 import { Streamdown } from "streamdown";
 
 import { cn } from "./lib/utils";
+import { AgentUIBlock } from "./ui/agent-ui-block";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Bubble, BubbleContent } from "./ui/bubble";
 import { Button } from "./ui/button";
@@ -40,7 +43,6 @@ import {
   MessageScrollerViewport,
 } from "./ui/message-scroller";
 import { Spinner } from "./ui/spinner";
-import { AgentUIBlock } from "./ui/agent-ui-block";
 
 export interface BunnyAgentUser {
   /** Display name; used for the initials avatar when no image is provided. */
@@ -113,7 +115,7 @@ function initials(name: string): string {
     .split(/\s+/)
     .filter(Boolean)
     .slice(0, 2)
-    .map((word) => word[0]!.toUpperCase())
+    .map((word) => word[0].toUpperCase())
     .join("");
 }
 
@@ -123,7 +125,10 @@ function toolLabel(name: string): string {
 
 /** Consecutive same-kind items render as one block (message group / tool run). */
 type Block =
-  | { kind: "user" | "assistant"; items: Extract<ChatItem, { kind: "user" | "assistant" }>[] }
+  | {
+      kind: "user" | "assistant";
+      items: Extract<ChatItem, { kind: "user" | "assistant" }>[];
+    }
   | { kind: "tool"; items: Extract<ChatItem, { kind: "tool" }>[] }
   | { kind: "ui"; items: Extract<ChatItem, { kind: "ui" }>[] };
 
@@ -150,7 +155,7 @@ declare global {
 /**
  * Drop-in Bunny Agent chat. Import the base styles once:
  *
- *   import "@bunny-agent/react/styles.css";
+ *   import "@bunny.net/agent-react/styles.css";
  *
  * Theme via CSS variables on `.ba-chat` (--ba-accent, --ba-surface, ...) or
  * ship your own stylesheet — everything this component emits is namespaced
@@ -207,6 +212,7 @@ export function BunnyAgentChat({
   // nothing is written back to storage — otherwise the initial empty
   // transcript would clobber the stored one.
   const [hydratedKey, setHydratedKey] = useState<string | null>(null);
+  // biome-ignore lint/correctness/useExhaustiveDependencies: controlledSessionId is read to decide whether the stored session id wins, but must not re-trigger hydration — a re-run would reload the transcript mid-conversation.
   useEffect(() => {
     if (!storageKey) return;
     try {
@@ -366,8 +372,8 @@ export function BunnyAgentChat({
                   <div className="ba:m-auto ba:flex ba:max-w-md ba:flex-col ba:items-center ba:gap-4 ba:py-10 ba:text-center">
                     <p className="ba:text-muted-foreground">
                       Hi! I&apos;m the Bunny Agent. I can create databases,
-                      define schemas, set up storage buckets, manage pull
-                      zones, DNS, and more — and hand you the credentials.
+                      define schemas, set up storage buckets, manage pull zones,
+                      DNS, and more — and hand you the credentials.
                     </p>
                   </div>
                   {/* Ready-to-send drafts, styled like the user's own bubbles. */}
@@ -376,7 +382,11 @@ export function BunnyAgentChat({
                     <MessageContent>
                       <MessageGroup>
                         {suggestions.map((suggestion) => (
-                          <Bubble key={suggestion} variant="outline" align="end">
+                          <Bubble
+                            key={suggestion}
+                            variant="outline"
+                            align="end"
+                          >
                             <BubbleContent
                               render={
                                 <button
@@ -568,20 +578,6 @@ export function BunnyAgentChat({
   );
 }
 
-export {
-  BunnyAgentLauncher,
-  BunnyAgentProvider,
-  BunnyAgentTrigger,
-  BunnyAgentWindow,
-  useBunnyAgent,
-} from "./launcher";
-export type {
-  BunnyAgentProviderProps,
-  BunnyAgentTriggerProps,
-  BunnyAgentTriggerState,
-  BunnyAgentWindowProps,
-} from "./launcher";
-
 export type {
   AgentStatus,
   ChatItem,
@@ -591,4 +587,17 @@ export type {
   UIBlock,
   UIChartSeries,
   UIChoice,
-} from "@bunny-agent/core";
+} from "@bunny.net/agent-core";
+export type {
+  BunnyAgentProviderProps,
+  BunnyAgentTriggerProps,
+  BunnyAgentTriggerState,
+  BunnyAgentWindowProps,
+} from "./launcher";
+export {
+  BunnyAgentLauncher,
+  BunnyAgentProvider,
+  BunnyAgentTrigger,
+  BunnyAgentWindow,
+  useBunnyAgent,
+} from "./launcher";

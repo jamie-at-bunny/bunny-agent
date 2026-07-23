@@ -31,12 +31,10 @@ export const listEdgeScripts = defineTool({
   input_schema: { type: "object", properties: {}, additionalProperties: false },
   run: async (client) => {
     const scripts = await client.main<
-      components["schemas"]["PaginationListModelOfEdgeScriptModel"] | EdgeScript[]
-    >(
-      "GET",
-      "/compute/script?page=1&perPage=100",
-    );
-    const list = Array.isArray(scripts) ? scripts : scripts.Items ?? [];
+      | components["schemas"]["PaginationListModelOfEdgeScriptModel"]
+      | EdgeScript[]
+    >("GET", "/compute/script?page=1&perPage=100");
+    const list = Array.isArray(scripts) ? scripts : (scripts.Items ?? []);
     return list.map(summarize);
   },
 });
@@ -55,11 +53,13 @@ export const createEdgeScript = defineTool({
       script_type: {
         type: "string",
         enum: ["standalone", "middleware"],
-        description: "Script type: standalone (own endpoint) or middleware (attached to a pull zone)",
+        description:
+          "Script type: standalone (own endpoint) or middleware (attached to a pull zone)",
       },
       create_linked_pull_zone: {
         type: "boolean",
-        description: "Also create a linked pull zone so the script gets a public *.b-cdn.net hostname (default false)",
+        description:
+          "Also create a linked pull zone so the script gets a public *.b-cdn.net hostname (default false)",
       },
     },
     required: ["name", "script_type"],
@@ -146,7 +146,10 @@ export const deleteEdgeScript = defineTool({
   input_schema: {
     type: "object",
     properties: {
-      script_id: { type: "number", description: "Numeric edge script ID to delete" },
+      script_id: {
+        type: "number",
+        description: "Numeric edge script ID to delete",
+      },
     },
     required: ["script_id"],
     additionalProperties: false,

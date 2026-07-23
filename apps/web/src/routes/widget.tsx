@@ -1,4 +1,4 @@
-import { BunnyAgentChat } from "@bunny-agent/react";
+import { BunnyAgentChat } from "@bunny.net/agent-react";
 
 /** The bunny.net logo mark (icon only), from the official brand logo. */
 function BunnyLogo({ className }: { className?: string }) {
@@ -10,39 +10,93 @@ function BunnyLogo({ className }: { className?: string }) {
       aria-hidden="true"
     >
       <defs>
-        <linearGradient x1="-33.94%" y1="50.041%" x2="153.691%" y2="50.041%" id="ba-logo-2">
+        <linearGradient
+          x1="-33.94%"
+          y1="50.041%"
+          x2="153.691%"
+          y2="50.041%"
+          id="ba-logo-2"
+        >
           <stop stopColor="#FBAA19" offset="0%" />
           <stop stopColor="#EF3E23" offset="100%" />
         </linearGradient>
-        <linearGradient x1="32.891%" y1="96.667%" x2="67.113%" y2="3.111%" id="ba-logo-3">
+        <linearGradient
+          x1="32.891%"
+          y1="96.667%"
+          x2="67.113%"
+          y2="3.111%"
+          id="ba-logo-3"
+        >
           <stop stopColor="#F78D1E" offset="0%" />
           <stop stopColor="#F37121" offset="100%" />
         </linearGradient>
-        <linearGradient x1="14.403%" y1="75.177%" x2="63.227%" y2="12.448%" id="ba-logo-4">
+        <linearGradient
+          x1="14.403%"
+          y1="75.177%"
+          x2="63.227%"
+          y2="12.448%"
+          id="ba-logo-4"
+        >
           <stop stopColor="#FEBE2D" offset="0%" />
           <stop stopColor="#F04E23" offset="100%" />
         </linearGradient>
-        <linearGradient x1="69.88%" y1="3.214%" x2="33.101%" y2="81.581%" id="ba-logo-5">
+        <linearGradient
+          x1="69.88%"
+          y1="3.214%"
+          x2="33.101%"
+          y2="81.581%"
+          id="ba-logo-5"
+        >
           <stop stopColor="#EA4425" offset="0%" />
           <stop stopColor="#FDBB27" offset="100%" />
         </linearGradient>
-        <linearGradient x1="-40.127%" y1="49.989%" x2="144.708%" y2="49.989%" id="ba-logo-6">
+        <linearGradient
+          x1="-40.127%"
+          y1="49.989%"
+          x2="144.708%"
+          y2="49.989%"
+          id="ba-logo-6"
+        >
           <stop stopColor="#F47920" offset="0%" />
           <stop stopColor="#E93825" offset="100%" />
         </linearGradient>
-        <linearGradient x1="-143.227%" y1="49.917%" x2="243.364%" y2="49.917%" id="ba-logo-7">
+        <linearGradient
+          x1="-143.227%"
+          y1="49.917%"
+          x2="243.364%"
+          y2="49.917%"
+          id="ba-logo-7"
+        >
           <stop stopColor="#FDCA0B" offset="0%" />
           <stop stopColor="#F5841F" offset="100%" />
         </linearGradient>
-        <linearGradient x1="39.677%" y1="-25.013%" x2="63.887%" y2="131.608%" id="ba-logo-8">
+        <linearGradient
+          x1="39.677%"
+          y1="-25.013%"
+          x2="63.887%"
+          y2="131.608%"
+          id="ba-logo-8"
+        >
           <stop stopColor="#E73C25" offset="0%" />
           <stop stopColor="#FAA21B" offset="100%" />
         </linearGradient>
-        <linearGradient x1="-562.994%" y1="49.998%" x2="562.905%" y2="49.998%" id="ba-logo-9">
+        <linearGradient
+          x1="-562.994%"
+          y1="49.998%"
+          x2="562.905%"
+          y2="49.998%"
+          id="ba-logo-9"
+        >
           <stop stopColor="#FDBA12" offset="0%" />
           <stop stopColor="#F7921E" offset="100%" />
         </linearGradient>
-        <linearGradient x1="1.983%" y1="41.501%" x2="106.167%" y2="60.044%" id="ba-logo-10">
+        <linearGradient
+          x1="1.983%"
+          y1="41.501%"
+          x2="106.167%"
+          y2="60.044%"
+          id="ba-logo-10"
+        >
           <stop stopColor="#FEBE2D" offset="0%" />
           <stop stopColor="#F04E23" offset="100%" />
         </linearGradient>
@@ -68,7 +122,10 @@ function BunnyLogo({ className }: { className?: string }) {
           d="M9.67,1.79 L30.67,13.23 L30.67,13.23 L31.27,13.56 C31.77,13.95 32.27,14.73 31.62,16.17 C30.62,18.32 26.62,20.4 22.01,18.77 C23.45,19.19 24.43,18.71 25.69,17.65 C26.69,16.83 27.78,14.16 26.09,13.54 C25.537447,13.3597251 24.972661,13.2193641 24.4,13.12 C21.26,12.51 15.77,11.93 13.75,10.78 C10.59,9 8.43,5.35 9.67,1.79 Z"
           fill="url(#ba-logo-6)"
         />
-        <path d="M9.67,1.79 C11.84,9.79 25.05,10.45 31.67,13.79 L9.67,1.79 Z" fill="url(#ba-logo-7)" />
+        <path
+          d="M9.67,1.79 C11.84,9.79 25.05,10.45 31.67,13.79 L9.67,1.79 Z"
+          fill="url(#ba-logo-7)"
+        />
         <path
           d="M16.9,37.92 C14.59,35 10.43,33.21 10.43,29 C10.4418178,25.946602 12.7199738,23.3772532 15.75,23 C10.9243431,23.0164606 7.0164606,26.9243431 6.99998539,31.75 C6.99890621,32.3413162 7.05922982,32.9311471 7.18,33.51 C9.09,35.67 11.85,38.22 14.18,40.38 C15.09,41.23 15.93,42.03 16.62,42.71 C17.1941689,42.0447548 17.544076,41.2154751 17.62,40.34 L17.62,40.34 C17.6746432,39.473467 17.4194484,38.6157289 16.9,37.92 L16.9,37.92 Z"
           fill="url(#ba-logo-8)"

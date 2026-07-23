@@ -1,4 +1,4 @@
-import { BunnyAgentClient, type AgentStatus } from "@bunny-agent/core";
+import { type AgentStatus, BunnyAgentClient } from "@bunny.net/agent-core";
 import { useQuery } from "@tanstack/react-query";
 
 const client = new BunnyAgentClient();

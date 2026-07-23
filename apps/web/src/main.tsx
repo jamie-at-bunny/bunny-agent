@@ -1,16 +1,16 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
-  Outlet,
-  RouterProvider,
   createRootRoute,
   createRoute,
   createRouter,
+  Outlet,
+  RouterProvider,
 } from "@tanstack/react-router";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { HomePage } from "./routes/home";
 import { WidgetPage } from "./routes/widget";
-import "@bunny-agent/react/styles.css";
+import "@bunny.net/agent-react/styles.css";
 import "./styles.css";
 
 const queryClient = new QueryClient();
@@ -39,7 +39,10 @@ declare module "@tanstack/react-router" {
   }
 }
 
-createRoot(document.getElementById("root")!).render(
+const rootElement = document.getElementById("root");
+if (!rootElement) throw new Error("index.html is missing #root");
+
+createRoot(rootElement).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <RouterProvider router={router} />

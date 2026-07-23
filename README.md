@@ -4,26 +4,28 @@ An embeddable AI agent for [bunny.net](https://bunny.net). Talks to Claude, acts
 
 ## Monorepo layout
 
-Follows the bunny-upload convention: a shared wire contract, a backend handler, a framework-agnostic frontend core, and thin framework wrappers.
+Follows the bunny-upload convention: a shared wire contract, a backend handler, a framework-agnostic frontend core, and thin framework wrappers. Everything ships under the `@bunny.net` npm scope; a backend installs `@bunny.net/agent`, a frontend installs the wrapper for its framework.
 
 ```
 packages/
-  shared/        @bunny-agent/shared  — wire types (AgentEvent, AgentStatus). No deps.
-  bunny-tools/   @bunny-agent/tools   — Bunny API client + the 41-tool registry.
+  agent/         @bunny.net/agent         — BACKEND, and the only package a
+                 server needs. The Claude agent loop as web-standard
+                 Request→Response handlers; mount it in Hono, Next, Bun, etc.
+                 The only package that touches secrets. Re-exports the tool
+                 registry and the wire types.
+  shared/        @bunny.net/agent-shared  — wire types (AgentEvent, AgentStatus). No deps.
+  tools/         @bunny.net/agent-tools   — Bunny API client + the 41-tool registry.
                  Single source of truth: every tool (name, description,
                  JSON schema, run function) is defined once here.
-  handler/       @bunny-agent/handler — BACKEND. The Claude agent loop as
-                 web-standard Request→Response handlers. The only package
-                 that touches secrets. Mount it in Hono, Next, Bun, etc.
-  core/          @bunny-agent/core    — FRONTEND core. Framework-agnostic
+  core/          @bunny.net/agent-core    — FRONTEND core. Framework-agnostic
                  client (SSE streaming, transcript reducer) + styles.css.
                  Use directly from Angular/Vue/vanilla.
-  react/         @bunny-agent/react   — <BunnyAgentChat /> React wrapper.
-  angular/       @bunny-agent/angular — <bunny-agent-chat> Angular wrapper.
-  mcp/           @bunny-agent/mcp     — MCP server (stdio) over the same
+  react/         @bunny.net/agent-react   — <BunnyAgentChat /> React wrapper.
+  angular/       @bunny.net/agent-angular — <bunny-agent-chat> Angular wrapper.
+  mcp/           @bunny.net/agent-mcp     — MCP server (stdio) over the same
                  tool registry, for Claude Code / Claude Desktop.
 apps/
-  server/        Hono server mounting @bunny-agent/handler (port 8787).
+  server/        Hono server mounting @bunny.net/agent (port 8787).
   web/           Vite + TanStack Router/Query app (port 3000):
                  /            standalone chat page
                  /widget      compact chat designed to be iframed
@@ -70,21 +72,21 @@ A floating 🐰 launcher opens the agent in an iframe. Use
 **React component:**
 
 ```tsx
-import { BunnyAgentChat } from "@bunny-agent/react";
-import "@bunny-agent/core/styles.css";
+import { BunnyAgentChat } from "@bunny.net/agent-react";
+import "@bunny.net/agent-core/styles.css";
 
-<BunnyAgentChat baseUrl="https://agent.example.com" compact />
+<BunnyAgentChat baseUrl="https://agent.example.com" compact />;
 ```
 
 Theme via CSS variables on `.ba-chat` (`--ba-accent`, `--ba-surface`,
 `--ba-radius`, ...) or override the stable `ba-*` class names.
 
 **Angular component:** standalone, signal-based (Angular ≥19). Add the core
-stylesheet to `angular.json` (`"styles": ["node_modules/@bunny-agent/core/styles.css", ...]`),
+stylesheet to `angular.json` (`"styles": ["node_modules/@bunny.net/agent-core/styles.css", ...]`),
 then:
 
 ```ts
-import { BunnyAgentChatComponent } from "@bunny-agent/angular";
+import { BunnyAgentChatComponent } from "@bunny.net/agent-angular";
 
 @Component({
   imports: [BunnyAgentChatComponent],
@@ -135,18 +137,18 @@ chats). A "new chat" button appears once a conversation exists.
 For custom storage, drive it yourself: `sessionId` pins the conversation to
 a known session (the server keeps LLM history per session id),
 `initialItems` preloads the transcript, and `onItemsChange` reports every
-change. `restoreChatItems` from `@bunny-agent/core` sanitizes a stored
+change. `restoreChatItems` from `@bunny.net/agent-core` sanitizes a stored
 transcript (drops malformed entries, marks interrupted tool calls).
 
 Note the server currently holds conversation history in memory — after a
 server restart a restored transcript still renders, but the agent starts
 that session without prior context.
 
-**Vue / vanilla:** use `@bunny-agent/core` directly — it's pure
+**Vue / vanilla:** use `@bunny.net/agent-core` directly — it's pure
 TypeScript + fetch:
 
 ```ts
-import { BunnyAgentClient, createSessionId, reduceChatItems } from "@bunny-agent/core";
+import { BunnyAgentClient, createSessionId, reduceChatItems } from "@bunny.net/agent-core";
 
 const client = new BunnyAgentClient({ baseUrl: "https://agent.example.com" });
 const sessionId = createSessionId();
@@ -156,13 +158,13 @@ await client.send(sessionId, "list my databases", (event) => {
 });
 ```
 
-**Backend in your own app:** mount `@bunny-agent/handler` anywhere that
+**Backend in your own app:** mount `@bunny.net/agent` anywhere that
 speaks web-standard Request/Response:
 
 ```ts
-import { createBunnyAgentHandler } from "@bunny-agent/handler";
+import { createBunnyAgentHandler } from "@bunny.net/agent";
 const agent = createBunnyAgentHandler();
-app.post("/api/chat", (c) => agent.chat(c.req.raw));   // Hono
+app.post("/api/chat", (c) => agent.chat(c.req.raw)); // Hono
 app.get("/api/status", () => agent.status());
 ```
 
@@ -176,16 +178,16 @@ claude mcp add bunny -- node /path/to/bunny-agent/packages/mcp/dist/index.js
 
 ## Tools (41)
 
-| Product | Tools |
-| --- | --- |
-| Account | `get_account` |
-| Databases (libSQL) | list/create/get/delete, `execute_sql`, tokens (create/revoke), statistics |
-| Storage | list/create/delete zones, `get_storage_zone_credentials` |
-| CDN pull zones | list/create/delete, `purge_pull_zone_cache` |
-| DNS | list/create/get/delete zones, add/delete records |
-| Edge Scripting | list/create/get/delete scripts, deploy code, publish, set variables |
-| Magic Containers | list/get/deploy/restart/delete apps |
-| Stream | list/create/get/delete video libraries (with API keys), list/create videos |
+| Product            | Tools                                                                      |
+| ------------------ | -------------------------------------------------------------------------- |
+| Account            | `get_account`                                                              |
+| Databases (libSQL) | list/create/get/delete, `execute_sql`, tokens (create/revoke), statistics  |
+| Storage            | list/create/delete zones, `get_storage_zone_credentials`                   |
+| CDN pull zones     | list/create/delete, `purge_pull_zone_cache`                                |
+| DNS                | list/create/get/delete zones, add/delete records                           |
+| Edge Scripting     | list/create/get/delete scripts, deploy code, publish, set variables        |
+| Magic Containers   | list/get/deploy/restart/delete apps                                        |
+| Stream             | list/create/get/delete video libraries (with API keys), list/create videos |
 
 Destructive tools are flagged (`destructive: true`); the agent's system prompt
 requires explicit user confirmation before calling them, and the MCP server

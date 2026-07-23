@@ -1,7 +1,7 @@
+import type { components } from "@bunny.net/openapi-client/generated/database.d.ts";
 // The /web build is pure fetch (no native bindings) — bundles cleanly in
 // Next.js and works fine in Node since we only connect over HTTPS.
 import { createClient } from "@libsql/client/web";
-import type { components } from "@bunny.net/openapi-client/generated/database.d.ts";
 import { defineTool } from "../registry.js";
 
 type DatabaseRecord = components["schemas"]["Database2"];
@@ -17,10 +17,9 @@ export const listDatabases = defineTool({
     "List all Bunny databases on the account, including their IDs, names, connection URLs, regions, and sizes.",
   input_schema: { type: "object", properties: {}, additionalProperties: false },
   run: async (client) => {
-    const data = await client.database<components["schemas"]["ListDatabaseV2Response"]>(
-      "GET",
-      "/v2/databases?page=1&per_page=100",
-    );
+    const data = await client.database<
+      components["schemas"]["ListDatabaseV2Response"]
+    >("GET", "/v2/databases?page=1&per_page=100");
     return data.databases.map((db) => ({
       id: db.id,
       name: db.name,
@@ -41,16 +40,19 @@ export const createDatabase = defineTool({
   input_schema: {
     type: "object",
     properties: {
-      name: { type: "string", description: "Database name (lowercase, hyphens allowed)" },
+      name: {
+        type: "string",
+        description: "Database name (lowercase, hyphens allowed)",
+      },
       primary_regions: {
         type: "array",
         items: { type: "string" },
-        description: "Primary region IDs, e.g. [\"FR\", \"DE\"]. Optional.",
+        description: 'Primary region IDs, e.g. ["FR", "DE"]. Optional.',
       },
       replicas_regions: {
         type: "array",
         items: { type: "string" },
-        description: "Read-replica region IDs, e.g. [\"UK\", \"NY\"]. Optional.",
+        description: 'Read-replica region IDs, e.g. ["UK", "NY"]. Optional.',
       },
     },
     required: ["name"],
@@ -58,8 +60,10 @@ export const createDatabase = defineTool({
   },
   run: async (client, input) => {
     const body: Record<string, unknown> = { name: input.name };
-    if (input.primary_regions?.length) body.primary_regions = input.primary_regions;
-    if (input.replicas_regions?.length) body.replicas_regions = input.replicas_regions;
+    if (input.primary_regions?.length)
+      body.primary_regions = input.primary_regions;
+    if (input.replicas_regions?.length)
+      body.replicas_regions = input.replicas_regions;
     return client.database<components["schemas"]["CreateDatabaseV2Response"]>(
       "POST",
       "/v2/databases",
@@ -74,7 +78,10 @@ export const getDatabase = defineTool({
   input_schema: {
     type: "object",
     properties: {
-      database_id: { type: "string", description: "Database ID, e.g. db_01ABC..." },
+      database_id: {
+        type: "string",
+        description: "Database ID, e.g. db_01ABC...",
+      },
     },
     required: ["database_id"],
     additionalProperties: false,
@@ -123,7 +130,8 @@ export const createDatabaseToken = defineTool({
       },
       expires_in_minutes: {
         type: "number",
-        description: "Optional expiry in minutes. Omit for a non-expiring token.",
+        description:
+          "Optional expiry in minutes. Omit for a non-expiring token.",
       },
     },
     required: ["database_id"],
@@ -133,10 +141,15 @@ export const createDatabaseToken = defineTool({
     const expiresAt = input.expires_in_minutes
       ? new Date(Date.now() + input.expires_in_minutes * 60_000).toISOString()
       : null;
-    return client.database<components["schemas"]["GenerateTokenDatabaseV2Response"]>(
+    return client.database<
+      components["schemas"]["GenerateTokenDatabaseV2Response"]
+    >(
       "PUT",
       `/v2/databases/${encodeURIComponent(input.database_id)}/auth/generate`,
-      { authorization: input.authorization ?? "full-access", expires_at: expiresAt },
+      {
+        authorization: input.authorization ?? "full-access",
+        expires_at: expiresAt,
+      },
     );
   },
 });
@@ -170,10 +183,14 @@ export const executeSql = defineTool({
   input_schema: {
     type: "object",
     properties: {
-      database_id: { type: "string", description: "Database ID to run the SQL against" },
+      database_id: {
+        type: "string",
+        description: "Database ID to run the SQL against",
+      },
       sql: {
         type: "string",
-        description: "SQL to execute (SQLite dialect). Semicolon-separated statements run in order.",
+        description:
+          "SQL to execute (SQLite dialect). Semicolon-separated statements run in order.",
       },
     },
     required: ["database_id", "sql"],
@@ -185,7 +202,8 @@ export const executeSql = defineTool({
       components["schemas"]["ReadDatabaseV2Response"] | DatabaseRecord
     >("GET", `/v2/databases/${encodeURIComponent(input.database_id)}`);
     const record = "db" in db ? db.db : db;
-    if (!record?.url) throw new Error(`Database ${input.database_id} has no connection URL`);
+    if (!record?.url)
+      throw new Error(`Database ${input.database_id} has no connection URL`);
 
     // Short-lived token scoped to this execution. Spec says { token }, but
     // stay tolerant of the older auth_token / jwt field names.
@@ -203,14 +221,18 @@ export const executeSql = defineTool({
     const token = tokenRes.token ?? tokenRes.auth_token ?? tokenRes.jwt;
     if (!token) throw new Error("Failed to generate a database auth token");
 
-    const libsql = createClient({ url: toHttpsUrl(record.url), authToken: token });
+    const libsql = createClient({
+      url: toHttpsUrl(record.url),
+      authToken: token,
+    });
     try {
       const statements = splitStatements(input.sql);
       const results = [];
       for (const statement of statements) {
         const res = await libsql.execute(statement);
         results.push({
-          statement: statement.length > 120 ? statement.slice(0, 120) + "…" : statement,
+          statement:
+            statement.length > 120 ? `${statement.slice(0, 120)}…` : statement,
           rows: res.rows.slice(0, 100),
           rows_returned: res.rows.length,
           rows_affected: res.rowsAffected,
@@ -253,7 +275,8 @@ function splitStatements(sql: string): string[] {
 
 export const getDatabaseStatistics = defineTool({
   name: "get_database_statistics",
-  description: "Get usage statistics for a Bunny database (reads, writes, storage).",
+  description:
+    "Get usage statistics for a Bunny database (reads, writes, storage).",
   input_schema: {
     type: "object",
     properties: {

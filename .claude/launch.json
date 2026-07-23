@@ -10,25 +10,53 @@
     {
       "name": "bunny-agent-web-alt",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "@bunny-agent/web", "dev", "--port", "3211", "--strictPort"],
+      "runtimeArgs": [
+        "--filter",
+        "bunny-agent-web",
+        "dev",
+        "--port",
+        "3211",
+        "--strictPort"
+      ],
       "port": 3211
     },
     {
       "name": "bunny-agent-web-alt2",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "@bunny-agent/web", "dev", "--port", "3212", "--strictPort"],
+      "runtimeArgs": [
+        "--filter",
+        "bunny-agent-web",
+        "dev",
+        "--port",
+        "3212",
+        "--strictPort"
+      ],
       "port": 3212
     },
     {
       "name": "bunny-agent-web-alt3",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "@bunny-agent/web", "dev", "--port", "3213", "--strictPort"],
+      "runtimeArgs": [
+        "--filter",
+        "bunny-agent-web",
+        "dev",
+        "--port",
+        "3213",
+        "--strictPort"
+      ],
       "port": 3213
     },
     {
       "name": "bunny-agent-web-alt4",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "@bunny-agent/web", "dev", "--port", "3214", "--strictPort"],
+      "runtimeArgs": [
+        "--filter",
+        "bunny-agent-web",
+        "dev",
+        "--port",
+        "3214",
+        "--strictPort"
+      ],
       "port": 3214
     }
   ]

@@ -1,27 +1,27 @@
 import {
+  afterRenderEffect,
   ChangeDetectionStrategy,
   Component,
-  ElementRef,
-  OnDestroy,
-  OnInit,
-  ViewEncapsulation,
-  afterRenderEffect,
   computed,
+  type ElementRef,
   input,
+  type OnDestroy,
+  type OnInit,
   output,
   signal,
+  ViewEncapsulation,
   viewChild,
 } from "@angular/core";
 
 import {
+  type AgentStatus,
   BunnyAgentClient,
+  type ChatItem,
   createSessionId,
   reduceChatItems,
-  type AgentStatus,
-  type ChatItem,
   type ToolErrorEvent,
   type ToolSuccessEvent,
-} from "@bunny-agent/core";
+} from "@bunny.net/agent-core";
 
 export interface BunnyAgentUser {
   /** Display name; used for the initials avatar when no image is provided. */
@@ -46,7 +46,7 @@ declare global {
 /**
  * Drop-in Bunny Agent chat. Add the base styles once, e.g. in angular.json:
  *
- *   "styles": ["node_modules/@bunny-agent/core/styles.css", ...]
+ *   "styles": ["node_modules/@bunny.net/agent-core/styles.css", ...]
  *
  * Theme via CSS variables on `.ba-chat` (--ba-accent, --ba-surface, ...) or
  * override the stable `ba-*` class names.
@@ -173,7 +173,7 @@ declare global {
       </form>
     </div>
   `,
-  // The core stylesheet (@bunny-agent/core/styles.css) covers everything
+  // The core stylesheet (@bunny.net/agent-core/styles.css) covers everything
   // except the host element and the avatar column, which are Angular-only.
   styles: `
     bunny-agent-chat {
@@ -309,7 +309,7 @@ export class BunnyAgentChatComponent implements OnInit, OnDestroy {
       .split(/\s+/)
       .filter(Boolean)
       .slice(0, 2)
-      .map((word) => word[0]!.toUpperCase())
+      .map((word) => word[0].toUpperCase())
       .join("");
   }
 

@@ -3,10 +3,18 @@
   "private": true,
   "scripts": {
     "build": "pnpm -r build",
-    "dev": "pnpm --parallel --filter @bunny-agent/server --filter @bunny-agent/web dev",
-    "mcp": "pnpm --filter @bunny-agent/mcp start"
+    "dev": "pnpm --parallel --filter bunny-agent-server --filter bunny-agent-web dev",
+    "mcp": "pnpm --filter @bunny.net/agent-mcp start",
+    "lint": "pnpm lint:biome && pnpm lint:prettier",
+    "lint:ci": "pnpm lint:biome:ci && pnpm lint:prettier:ci",
+    "lint:biome": "biome check --write .",
+    "lint:biome:ci": "biome ci",
+    "lint:prettier": "prettier --write \"**/*.{md,mdx,yml,yaml}\"",
+    "lint:prettier:ci": "prettier --check \"**/*.{md,mdx,yml,yaml}\""
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.5.1",
+    "prettier": "^3.8.3",
     "typescript": "^5.7.0"
   },
   "packageManager": "pnpm@10.23.0"

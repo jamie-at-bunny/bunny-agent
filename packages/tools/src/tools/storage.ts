@@ -28,11 +28,10 @@ export const listStorageZones = defineTool({
   run: async (client) => {
     // The spec types this as a plain array; with page>0 the API actually
     // returns a paginated { Items } wrapper it doesn't model.
-    const zones = await client.main<StorageZone[] | { Items?: StorageZone[] | null }>(
-      "GET",
-      "/storagezone?page=1&perPage=100",
-    );
-    const list = Array.isArray(zones) ? zones : zones.Items ?? [];
+    const zones = await client.main<
+      StorageZone[] | { Items?: StorageZone[] | null }
+    >("GET", "/storagezone?page=1&perPage=100");
+    const list = Array.isArray(zones) ? zones : (zones.Items ?? []);
     return list.map(summarize);
   },
 });
@@ -46,7 +45,8 @@ export const createStorageZone = defineTool({
     properties: {
       name: {
         type: "string",
-        description: "Globally unique storage zone name (lowercase alphanumeric and dashes)",
+        description:
+          "Globally unique storage zone name (lowercase alphanumeric and dashes)",
       },
       region: {
         type: "string",
@@ -89,7 +89,10 @@ export const getStorageZoneCredentials = defineTool({
   input_schema: {
     type: "object",
     properties: {
-      storage_zone_id: { type: "number", description: "Numeric storage zone ID" },
+      storage_zone_id: {
+        type: "number",
+        description: "Numeric storage zone ID",
+      },
     },
     required: ["storage_zone_id"],
     additionalProperties: false,
@@ -118,7 +121,10 @@ export const deleteStorageZone = defineTool({
   input_schema: {
     type: "object",
     properties: {
-      storage_zone_id: { type: "number", description: "Numeric storage zone ID to delete" },
+      storage_zone_id: {
+        type: "number",
+        description: "Numeric storage zone ID to delete",
+      },
     },
     required: ["storage_zone_id"],
     additionalProperties: false,

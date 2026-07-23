@@ -1,5 +1,5 @@
 /*
- * @bunny-agent/react styles — precompiled, fully namespaced.
+ * @bunny.net/agent-react styles — precompiled, fully namespaced.
  *
  * Every utility is compiled with the `ba` prefix (classes look like
  * `ba:flex`) and no global preflight is emitted, so this file is safe to
@@ -126,9 +126,9 @@
 
   /* :not(.typeset *) keeps typeset's own flow margins intact. */
   .ba-chat
-    :is(p, h1, h2, h3, h4, h5, h6, ul, ol, figure, blockquote, pre):not(
-      .typeset *
-    ) {
+  :is(p, h1, h2, h3, h4, h5, h6, ul, ol, figure, blockquote, pre):not(
+    .typeset *
+  ) {
     margin: 0;
   }
 

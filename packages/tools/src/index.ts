@@ -1,3 +1,4 @@
+import type { ToolDefinition } from "./registry.js";
 import { accountTools } from "./tools/account.js";
 import { computeTools } from "./tools/compute.js";
 import { containerTools } from "./tools/containers.js";
@@ -6,9 +7,8 @@ import { dnsTools } from "./tools/dns.js";
 import { pullZoneTools } from "./tools/pullzones.js";
 import { storageTools } from "./tools/storage.js";
 import { streamTools } from "./tools/stream.js";
-import type { ToolDefinition } from "./registry.js";
 
-export { BunnyClient, BunnyApiError, resolveApiKey } from "./client.js";
+export { BunnyApiError, BunnyClient, resolveApiKey } from "./client.js";
 export type { ToolDefinition } from "./registry.js";
 
 export const allTools: ToolDefinition[] = [

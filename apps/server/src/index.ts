@@ -1,9 +1,9 @@
 import { existsSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { createBunnyAgentHandler } from "@bunny.net/agent";
 import { serve } from "@hono/node-server";
 import { serveStatic } from "@hono/node-server/serve-static";
-import { createBunnyAgentHandler } from "@bunny-agent/handler";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 

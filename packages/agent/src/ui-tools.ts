@@ -4,7 +4,12 @@
  * intercepts them, validates the input into a UIBlock, and emits it as a
  * `ui` event on the SSE stream for the frontend to render.
  */
-import type { UIAction, UIBlock, UIChartSeries, UIChoice } from "@bunny-agent/shared";
+import type {
+  UIAction,
+  UIBlock,
+  UIChartSeries,
+  UIChoice,
+} from "@bunny.net/agent-shared";
 
 export interface UIToolSpec {
   name: string;
@@ -67,7 +72,10 @@ export const uiTools: UIToolSpec[] = [
     input_schema: {
       type: "object",
       properties: {
-        prompt: { type: "string", description: "Question shown above the options." },
+        prompt: {
+          type: "string",
+          description: "Question shown above the options.",
+        },
         multi: {
           type: "boolean",
           description: "Allow selecting several options. Defaults to false.",
@@ -116,7 +124,8 @@ export const uiTools: UIToolSpec[] = [
         title: { type: "string", description: "Short chart title." },
         x_key: {
           type: "string",
-          description: "Key in each data row holding the x-axis label (e.g. the date).",
+          description:
+            "Key in each data row holding the x-axis label (e.g. the date).",
         },
         series: {
           type: "array",
@@ -126,7 +135,8 @@ export const uiTools: UIToolSpec[] = [
             properties: {
               key: {
                 type: "string",
-                description: "Key in each data row holding this series' numeric value.",
+                description:
+                  "Key in each data row holding this series' numeric value.",
               },
               label: {
                 type: "string",
@@ -173,14 +183,22 @@ function asTrimmedString(value: unknown): string | undefined {
  * Validate and normalize a UI tool call into a UIBlock. Throws with a
  * model-readable message on bad input so the agent can self-correct.
  */
-export function buildUIBlock(name: string, input: Record<string, any>): UIBlock {
+export function buildUIBlock(
+  name: string,
+  input: Record<string, any>,
+): UIBlock {
   switch (name) {
     case "suggest_actions": {
-      const raw = Array.isArray(input.actions) ? input.actions : fail("actions must be an array");
+      const raw = Array.isArray(input.actions)
+        ? input.actions
+        : fail("actions must be an array");
       if (raw.length === 0) fail("actions must contain at least one entry");
-      if (raw.length > MAX_ACTIONS) fail(`too many actions (max ${MAX_ACTIONS})`);
+      if (raw.length > MAX_ACTIONS)
+        fail(`too many actions (max ${MAX_ACTIONS})`);
       const actions: UIAction[] = raw.map((entry: any, i: number) => {
-        const label = asTrimmedString(entry?.label) ?? fail(`actions[${i}].label is required`);
+        const label =
+          asTrimmedString(entry?.label) ??
+          fail(`actions[${i}].label is required`);
         const action: UIAction = { label };
         const message = asTrimmedString(entry?.message);
         if (message) action.message = message;
@@ -196,12 +214,18 @@ export function buildUIBlock(name: string, input: Record<string, any>): UIBlock 
     }
 
     case "ask_choices": {
-      const prompt = asTrimmedString(input.prompt) ?? fail("prompt is required");
-      const raw = Array.isArray(input.choices) ? input.choices : fail("choices must be an array");
+      const prompt =
+        asTrimmedString(input.prompt) ?? fail("prompt is required");
+      const raw = Array.isArray(input.choices)
+        ? input.choices
+        : fail("choices must be an array");
       if (raw.length < 2) fail("choices must contain at least two entries");
-      if (raw.length > MAX_CHOICES) fail(`too many choices (max ${MAX_CHOICES})`);
+      if (raw.length > MAX_CHOICES)
+        fail(`too many choices (max ${MAX_CHOICES})`);
       const choices: UIChoice[] = raw.map((entry: any, i: number) => {
-        const label = asTrimmedString(entry?.label) ?? fail(`choices[${i}].label is required`);
+        const label =
+          asTrimmedString(entry?.label) ??
+          fail(`choices[${i}].label is required`);
         const choice: UIChoice = { label };
         const value = asTrimmedString(entry?.value);
         if (value) choice.value = value;
@@ -224,23 +248,33 @@ export function buildUIBlock(name: string, input: Record<string, any>): UIBlock 
         fail('kind must be "line", "area", or "bar"');
       }
       const xKey = asTrimmedString(input.x_key) ?? fail("x_key is required");
-      const rawSeries = Array.isArray(input.series) ? input.series : fail("series must be an array");
-      if (rawSeries.length === 0) fail("series must contain at least one entry");
-      if (rawSeries.length > MAX_SERIES) fail(`too many series (max ${MAX_SERIES})`);
+      const rawSeries = Array.isArray(input.series)
+        ? input.series
+        : fail("series must be an array");
+      if (rawSeries.length === 0)
+        fail("series must contain at least one entry");
+      if (rawSeries.length > MAX_SERIES)
+        fail(`too many series (max ${MAX_SERIES})`);
       const series: UIChartSeries[] = rawSeries.map((entry: any, i: number) => {
-        const key = asTrimmedString(entry?.key) ?? fail(`series[${i}].key is required`);
+        const key =
+          asTrimmedString(entry?.key) ?? fail(`series[${i}].key is required`);
         const item: UIChartSeries = { key };
         const label = asTrimmedString(entry?.label);
         if (label) item.label = label;
         return item;
       });
-      const rawData = Array.isArray(input.data) ? input.data : fail("data must be an array");
+      const rawData = Array.isArray(input.data)
+        ? input.data
+        : fail("data must be an array");
       if (rawData.length === 0) fail("data must contain at least one row");
       if (rawData.length > MAX_ROWS) {
-        fail(`too many rows (max ${MAX_ROWS}) — aggregate the data first (e.g. daily instead of hourly)`);
+        fail(
+          `too many rows (max ${MAX_ROWS}) — aggregate the data first (e.g. daily instead of hourly)`,
+        );
       }
       const data = rawData.map((row: any, i: number) => {
-        if (typeof row !== "object" || row === null) fail(`data[${i}] must be an object`);
+        if (typeof row !== "object" || row === null)
+          fail(`data[${i}] must be an object`);
         if (!(xKey in row)) fail(`data[${i}] is missing x_key "${xKey}"`);
         for (const s of series) {
           if (typeof row[s.key] !== "number") {

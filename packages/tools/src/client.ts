@@ -28,7 +28,8 @@ export function resolveApiKey(explicit?: string): string {
   if (fromEnv) return fromEnv;
 
   const candidates = [
-    process.env.XDG_CONFIG_HOME && join(process.env.XDG_CONFIG_HOME, "bunnynet.json"),
+    process.env.XDG_CONFIG_HOME &&
+      join(process.env.XDG_CONFIG_HOME, "bunnynet.json"),
     join(homedir(), ".config", "bunnynet.json"),
     join(homedir(), ".bunnynet.json"),
   ].filter(Boolean) as string[];

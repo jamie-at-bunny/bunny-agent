@@ -1,16 +1,17 @@
-"use client"
+"use client";
 
-import { Button as ButtonPrimitive } from "@base-ui/react/button"
-import { cva, type VariantProps } from "class-variance-authority"
+import { Button as ButtonPrimitive } from "@base-ui/react/button";
+import { cva, type VariantProps } from "class-variance-authority";
 
-import { cn } from "../lib/utils"
+import { cn } from "../lib/utils";
 
 const buttonVariants = cva(
   "ba:group/button ba:inline-flex ba:shrink-0 ba:items-center ba:justify-center ba:rounded-2xl ba:border ba:border-transparent ba:bg-clip-padding ba:text-sm ba:font-medium ba:whitespace-nowrap ba:transition-all ba:outline-none ba:select-none ba:focus-visible:border-ring ba:focus-visible:ring-3 ba:focus-visible:ring-ring/30 ba:active:not-aria-[haspopup]:translate-y-px ba:disabled:pointer-events-none ba:disabled:opacity-50 ba:aria-invalid:border-destructive ba:aria-invalid:ring-3 ba:aria-invalid:ring-destructive/20 ba:dark:aria-invalid:border-destructive/50 ba:dark:aria-invalid:ring-destructive/40 ba:[&_svg]:pointer-events-none ba:[&_svg]:shrink-0 ba:[&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
-        default: "ba:bg-primary ba:text-primary-foreground ba:hover:bg-primary/80",
+        default:
+          "ba:bg-primary ba:text-primary-foreground ba:hover:bg-primary/80",
         outline:
           "ba:border-border ba:bg-background ba:hover:bg-muted ba:hover:text-foreground ba:aria-expanded:bg-muted ba:aria-expanded:text-foreground ba:dark:bg-transparent ba:dark:hover:bg-input/30",
         secondary:
@@ -37,8 +38,8 @@ const buttonVariants = cva(
       variant: "default",
       size: "default",
     },
-  }
-)
+  },
+);
 
 function Button({
   className,
@@ -52,8 +53,7 @@ function Button({
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
     />
-  )
+  );
 }
 
-export { Button, buttonVariants }
-
+export { Button, buttonVariants };
